@@ -35,6 +35,10 @@
         log("Start generating bar codes");
 
         for (const code of codes) {
+            if(code.length != 13) {
+                alert('Wrong input');
+                return;
+            }
             log("Generate barcode " + code + '...');
             let barcodeDiv = document.createElement("canvas");
             container.appendChild(barcodeDiv);
