@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>EU/UK/CA label generator</title>
+    <script src="https://cdn.jsdelivr.net/jsbarcode/3.6.0/barcodes/JsBarcode.code128.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        h1 {
+            color: #000000;
+        }
+
+        label {
+            font-size: 16px;
+        }
+
+        textarea {
+            width: 500px;
+            padding: 10px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #b3aaf9;
+            border-radius: 16px;
+            box-shadow: 0px 0px 8px;
+        }
+
+        .mainbutton {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #9f35eb;
+            color: #fff;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .mainbutton:hover {
+            background-color: #6b239e;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #9d60c9;
+            color: #fff;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #764797;
+        }
+
+
+
+        #console {
+            margin-top: 20px;
+            color: #4d4d4d;
+        }
+
+        svg {
+            display: block;
+            margin: 20px auto;
+        }
+
+        a {
+            color: #91c4c7;
+        }
+
+        a:hover {
+            color: #a4e1e4;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>EU/UK/CA label generator</h1>
+    <label for="barcode-input">Please enter here Fedex tracking number for the box and you will receive a label for
+        master box:</label><br /><br />
+    <textarea id="barcode-input" rows="5"></textarea><br /><br />
+
+    <label for="suffix">Suffix:</label>
+    <input id="suffix-input" type="text" name="suffix"><br><br>
+    <!-- 
+    Italy - IT 
+UK - UK
+Canada - CA
+Germany - DE
+
+способы отправки 
+
+FBA - A
+FBM - M
+WFS - W
+FBS - S -->
+    <button onclick="setSuffixInput('MUK')">FBM UK <img src="img/gb.svg" height="10" /></button>
+    <button onclick="setSuffixInput('AUK')">FBA UK <img src="img/gb.svg" height="10" /></button>
+    <button onclick="setSuffixInput('MIT')">FBM Italy <img src="img/it.svg" height="10" /></button>
+    <button onclick="setSuffixInput('AIT')">FBA Italy <img src="img/it.svg" height="10" /></button>
+    <button onclick="setSuffixInput('MCA')">FBM Canada <img src="img/ca.svg" height="10" /></button>
+    <button onclick="setSuffixInput('ACA')">FBA Canada <img src="img/ca.svg" height="10" /></button>
+    <button onclick="setSuffixInput('WCA')">WFS Canada <img src="img/ca.svg" height="10" /></button>
+    <button onclick="setSuffixInput('SCA')">FBS Canada <img src="img/ca.svg" height="10" /></button>
+
+    <br /><br />
+    <button class="mainbutton" onclick="generateBarcodes()">Generate label</button><br /><br />
+
+
+    <div id="console"></div>
+
+    <br>
+    <div id="barcode-container"></div>
+    <svg id="barcode"></svg>
+    <br>
+
+    <script>
+        window.jsPDF = window.jspdf.jsPDF;
+        var pdfs = [];
+
+        async function generateBarcodes() {
+            var codes = document.getElementById("barcode-input").value.split("\n");
+            var container = document.getElementById("barcode-container");
+            container.innerHTML = "";
+
+            console.log(codes);
+            pdfs = [];
+
+            log("Start generating bar codes");
+    
+
+            for (let code of codes) {
+                code = document.getElementById("suffix-input").value.trim() + code;
+
+                if (countDigits(code) != 13) {
+                    alert('Wrong input: ' + code);
+                    log('Code ' + code + ' has a wrong number of numbers');
+                    return;
+                }
+
+                log("Generate barcode " + code + '...');
+                let barcodeDiv = document.createElement("canvas");
+                container.appendChild(barcodeDiv);
+
+                JsBarcode(barcodeDiv, code.trim(), {
+                    format: "code128",
+                    lineColor: "#000",
+                    width: 16,
+                    height: 800,
+                    fontSize: 160,
+                    displayValue: true,
+                    margin: 0,
+                });
+
+
+
+                await html2canvas(barcodeDiv)
+                    .then((canvas) => {
+                        const imgData = canvas.toDataURL('image/jpeg');
+                        const pdf = new jsPDF(
+                            'l', 'px', [barcodeDiv.width, barcodeDiv.height]
+                        );
+                        pdf.addImage(imgData, 'JPEG', 0, 0, barcodeDiv.width, barcodeDiv.height, 'FAST', 0);
+                        pdf.save(code + '.pdf');
+                        // pdfs.push({ pdf: pdf, fileName: code + '.pdf' });
+                        log("Finished generating barcode " + code);
+                        log("Downloading started - " + code + '.pdf');
+
+                        // var downloadLink = document.createElement('a');
+                        // downloadLink.href = URL.createObjectURL(pdf.output('blob'));
+                        // downloadLink.download = code + ".pdf";
+
+                        // document.body.appendChild(downloadLink);
+                        // downloadLink.click();
+                        // document.body.removeChild(downloadLink);
+                    });
+
+            }
+        }
+
+        function log(msg) {
+            let div = document.createElement("item");
+            div.innerText = msg;
+            document.getElementById('console').appendChild(div);
+            document.getElementById('console').appendChild(document.createElement("br"));
+        }
+
+        function countDigits(str) {
+            // Используем регулярное выражение для поиска всех цифр в строке
+            let digits = str.match(/\d/g);
+            // Если цифры найдены, возвращаем их количество, иначе возвращаем 0
+            return digits ? digits.length : 0;
+        }
+
+        function setSuffixInput(s) {
+            document.getElementById("suffix-input").value = s;
+        }
+    </script>
+</body>
+
+</html>
