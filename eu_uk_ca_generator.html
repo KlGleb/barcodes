@@ -92,8 +92,7 @@
         master box:</label><br /><br />
     <textarea id="barcode-input" rows="5"></textarea><br /><br />
 
-    <label for="suffix">Suffix:</label>
-    <input id="suffix-input" type="text" name="suffix"><br><br>
+  
     <!-- 
     Italy - IT 
 UK - UK
@@ -116,6 +115,8 @@ FBS - S -->
     <button onclick="setSuffixInput('SCA')">FBS Canada <img src="img/ca.svg" height="10" /></button>
 
     <br /><br />
+    <label for="suffix">Suffix:</label>
+    <input id="suffix-input" type="text" name="suffix"><br><br>
     <button class="mainbutton" onclick="generateBarcodes()">Generate label</button><br /><br />
 
 
@@ -206,6 +207,7 @@ FBS - S -->
 
         function setSuffixInput(s) {
             document.getElementById("suffix-input").value = s;
+            generateBarcodes();
         }
     </script>
 </body>
