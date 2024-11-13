@@ -92,7 +92,7 @@
         master box:</label><br /><br />
     <textarea id="barcode-input" rows="5"></textarea><br /><br />
 
-  
+
     <!-- 
     Italy - IT 
 UK - UK
@@ -105,14 +105,34 @@ FBA - A
 FBM - M
 WFS - W
 FBS - S -->
-    <button onclick="setSuffixInput('MUK')">FBM UK <img src="img/gb.svg" height="10" /></button>
-    <button onclick="setSuffixInput('AUK')">FBA UK <img src="img/gb.svg" height="10" /></button>
-    <button onclick="setSuffixInput('MIT')">FBM Italy <img src="img/it.svg" height="10" /></button>
-    <button onclick="setSuffixInput('AIT')">FBA Italy <img src="img/it.svg" height="10" /></button>
-    <button onclick="setSuffixInput('MCA')">FBM Canada <img src="img/ca.svg" height="10" /></button>
-    <button onclick="setSuffixInput('ACA')">FBA Canada <img src="img/ca.svg" height="10" /></button>
-    <button onclick="setSuffixInput('WCA')">WFS Canada <img src="img/ca.svg" height="10" /></button>
-    <button onclick="setSuffixInput('SCA')">FBS Canada <img src="img/ca.svg" height="10" /></button>
+    <br /><br />
+    <button onclick="setSuffixInput('M1UK')">FBM UK 1<img src="img/gb.svg" height="10" /></button>
+    <button onclick="setSuffixInput('M2UK')">FBM UK 2<img src="img/gb.svg" height="10" /></button>
+    <button onclick="setSuffixInput('M3UK')">FBM UK 3<img src="img/gb.svg" height="10" /></button>
+
+    <br /><br />
+    <button onclick="setSuffixInput('M1CA')">FBM CA 1<img src="img/ca.svg" height="10" /></button>
+    <button onclick="setSuffixInput('M2CA')">FBM CA 2<img src="img/ca.svg" height="10" /></button>
+    <button onclick="setSuffixInput('M3CA')">FBM CA 3<img src="img/ca.svg" height="10" /></button>
+
+    <br /><br />
+    <button onclick="setSuffixInput('M1GE')">FBM GE 1<img src="img/de.svg" height="10" /></button>
+    <button onclick="setSuffixInput('M2GE')">FBM GE 2<img src="img/de.svg" height="10" /></button>
+    <button onclick="setSuffixInput('M3GE')">FBM GE 3<img src="img/de.svg" height="10" /></button>
+
+
+    <br /><br />
+    <button onclick="setSuffixInput('M1MX')">FBM MX 1<img src="img/mx.svg" height="10" /></button>
+    <button onclick="setSuffixInput('M2MX')">FBM MX 2<img src="img/mx.svg" height="10" /></button>
+    <button onclick="setSuffixInput('M3MX')">FBM MX 3<img src="img/mx.svg" height="10" /></button>
+
+    <!-- Ebay UK - E1UK
+Ebay US - E1US -->
+
+    <br /><br />
+    <button onclick="setSuffixInput('E1UK')"><img src="img/EBay_logo.svg" height="20" /> <img src="img/gb.svg" height="20" /></button>
+    <button onclick="setSuffixInput('E1US')"><img src="img/EBay_logo.svg" height="20" /> <img src="img/us.svg" height="20" /></button>
+
 
     <br /><br />
     <label for="suffix">Suffix:</label>
@@ -140,16 +160,10 @@ FBS - S -->
             pdfs = [];
 
             log("Start generating bar codes");
-    
+
 
             for (let code of codes) {
                 code = document.getElementById("suffix-input").value.trim() + code;
-
-                if (countDigits(code) != 13) {
-                    alert('Wrong input: ' + code);
-                    log('Code ' + code + ' has a wrong number of numbers');
-                    return;
-                }
 
                 log("Generate barcode " + code + '...');
                 let barcodeDiv = document.createElement("canvas");
